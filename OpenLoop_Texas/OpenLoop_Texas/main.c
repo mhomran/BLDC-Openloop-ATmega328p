@@ -56,7 +56,6 @@ int main(void)
 {
   volatile unsigned int i;
   unsigned int Temp_DutyCycle;    
-  // Configure Port pins (P1.0-P1.3) as interrupt capable input pins, Fault IN
   // and Hall Sensor Inputs
   DDRD = 0b00000000;     // Input DIR >mega 20 , 19 , 18 = PD1 , PD2 , PD3
   EICRA |= 1 << ISC10 | 1 << ISC20 | 1 << ISC30; // Trigger on any edge
@@ -67,7 +66,6 @@ int main(void)
   
   // Configure Port I/O as Timer PWM output pin    
   // PWM HS> (pin 11 in Arduino mega) OCR1A PB5 
-  //, 12 T1B PB6, 13 T1C PB7 
   DDRB |= 1 << PINB5;
   //HS en PL 2,4,6	LS en PL 1,3,5
   DDRL = 0b01111110;
@@ -107,7 +105,7 @@ int main(void)
       {
 	      // Trigger ADC Sampling
 		  
-		  ADCSRA |= ADSC;
+		  ADCSRA |= 1 << ADSC;
 		  while(ADCSRA & (1 << ADSC));
 		  Temp_DutyCycle = (ADC/1024.0) * (int)(TIMER_PWM_PERIOD * 0.99); 
 	         
@@ -126,7 +124,7 @@ void Start_Motor(void)
 {
 	// Read Speed Input and update duty cycle variable
 	//Start_ADC_Conversion();
-	ADCSRA |= ADSC;
+	ADCSRA |= 1 << ADSC;
 	while(ADCSRA & (1 << ADSC));
 	Desired_PWM_DutyCycle = (ADC/1024.0) * (int)(TIMER_PWM_PERIOD * 0.99);
 
