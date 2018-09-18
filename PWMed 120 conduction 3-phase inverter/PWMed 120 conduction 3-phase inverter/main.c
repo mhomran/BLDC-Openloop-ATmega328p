@@ -30,6 +30,7 @@ void init_timers(void){
   TCCR4A |= 1 << COM4A1 | 1 << COM4A0 | 1 << COM4B1;
   
   TCCR5A |= 1 << COM5B1;
+  TIMSK5 |= 1 << TOIE1;
   
   OCR1A = ICR1 * 2 /3 ;
   OCR3A = OCR1A; // +1 and -1 to add some dead time between switches
@@ -47,35 +48,30 @@ void init_timers(void){
   
   GTCCR = 0;
 }
-
+volatile int curADC, prevADC;
 void init_adc(void){   //A0
   ADMUX |= (1 << REFS0) ;
   ADCSRA |= (1 << ADEN) | (1 << ADPS1) | (1 << ADPS2);
 }
 
-void init_int0(void){
-  EICRA |= (1 << ISC00) | (1 << ISC01);
-  EIMSK |= (1 << INT0);  //21
-}
-void int0(void);
 
-ISR(INT0_vect){
-  int0();
-}
-
-void int0(void){  
-  GTCCR = (1<<TSM)|(1<<PSRSYNC); // halt all timers
+ISR(TIMER5_OVF_vect){ 
+	//ADSC
+	ADCSRA |= (1<<ADSC);
+	while( ADCSRA & (1<<ADSC) );
+	curADC = ADC;
+	if (!((curADC < (prevADC + 5)) && (curADC > (prevADC - 5)))){
+	prevADC = curADC;
+	
+	GTCCR = (1<<TSM)|(1<<PSRSYNC); // halt all timers
     TCNT1 = ICR1/3;     //shift left //initial value 50% shift
     TCNT3 = 0;    //stationary
     TCNT4 = -1 * TCNT1;     //shift right the same amount
 
+    OCR5B = (ICR5 - 1) * (prevADC / 1023.0);
   
-  ADCSRA |= (1<<ADSC);
-  while( ADCSRA & (1<<ADSC) ){};
-  adc10 = ADC;
-  OCR5B = (ICR5 - 1) * (adc10 / 1023.0);
-  
-  GTCCR=0;
+    GTCCR=0;
+  }
 } 
 
 int main(void)
@@ -87,7 +83,9 @@ int main(void)
   DDRH |= 1 << PINH3 | 1 << PINH4;
   DDRL |= 1 << PINL4;
   init_adc();
-  init_int0();
+  ADCSRA |= (1<<ADSC);
+  while( ADCSRA & (1<<ADSC) );
+  prevADC = ADC;
   init_timers();
   sei();
     while (1) 
