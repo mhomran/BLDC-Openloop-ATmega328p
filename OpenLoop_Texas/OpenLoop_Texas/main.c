@@ -60,6 +60,8 @@ int main(void)
   DDRD = 0b00000000;     // Input DIR >mega 20 , 19 , 18 = PD1 , PD2 , PD3
   EICRA |= 1 << ISC10 | 1 << ISC20 | 1 << ISC30; // Trigger on any edge
   EIMSK |= 1 << INT1 | 1 << INT2 | 1 << INT3;
+  // INT1 >> yellow || INT2 << green || INT3 blue
+  
   //you can put INT0 for fault Input
   
   // Configure Timer1 PWM pin and the enable pins
@@ -67,7 +69,7 @@ int main(void)
   // Configure Port I/O as Timer PWM output pin    
   // PWM HS> (pin 11 in Arduino mega) OCR1A PB5 
   DDRB |= 1 << PINB5;
-  //HS en PL 2,4,6	LS en PL 1,3,5
+  //HS en PL 2,4,6	LS en PL 1,3,5 ||mega HS >> 47, 45, 43 || LS >> 48, 46, 44
   DDRL = 0b01111110;
 
   TCCR1A |= 1 << WGM11;
@@ -84,6 +86,7 @@ int main(void)
   //Init_ADC()
   ADMUX |= 1 << REFS0; //AVCC with external capacitor at AREF pin, MUX = 0000 >ADC0 >PF0>A0
   ADCSRA |= 1 << ADEN | 1 << ADPS2;  //N = 16
+  int adc10;
   
   // Variable Initializations
   PWM_Update_Counter = 0x0;
@@ -107,7 +110,8 @@ int main(void)
 		  
 		  ADCSRA |= 1 << ADSC;
 		  while(ADCSRA & (1 << ADSC));
-		  Temp_DutyCycle = (ADC/1024.0) * (int)(TIMER_PWM_PERIOD * 0.99); 
+		  adc10= ADC;
+		  Temp_DutyCycle = (adc10/1024.0) * (int)(TIMER_PWM_PERIOD * 0.99); 
 	         
 	      if (Temp_DutyCycle < MIN_PWM_DUTYCYCLE)        
 	      Desired_PWM_DutyCycle = MIN_PWM_DUTYCYCLE;  // < Min DutyCycle %age - latch to min value, 1023
@@ -126,7 +130,8 @@ void Start_Motor(void)
 	//Start_ADC_Conversion();
 	ADCSRA |= 1 << ADSC;
 	while(ADCSRA & (1 << ADSC));
-	Desired_PWM_DutyCycle = (ADC/1024.0) * (int)(TIMER_PWM_PERIOD * 0.99);
+	int adc10 =ADC;
+	Desired_PWM_DutyCycle = (adc10/1024.0) * (int)(TIMER_PWM_PERIOD * 0.99);
 
 	// Read Hall inputs
 	Hall_IN = ((PIND & 0b00001110) >> 1);
