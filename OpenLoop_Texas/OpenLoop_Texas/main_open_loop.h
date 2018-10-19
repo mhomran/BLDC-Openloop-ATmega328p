@@ -45,9 +45,9 @@
 // Clock Timing Definitions
 //****************************************************************************//
 
-#define SYSTEM_FREQ 16000               // (in kHz) System Freq, Timer PWM Time Base
-#define PWM_FREQ 16000                // (in Hz) PWM Freq for switching the H-Bridge FETs 
-#define TIMER_PWM_PERIOD  (unsigned long)(SYSTEM_FREQ)*(1000)/PWM_FREQ
+#define SYSTEM_FREQ 16000000UL          // (in Hz) System Freq, Timer PWM Time Base
+#define PWM_FREQ 5000                  // (in Hz) PWM Freq for switching the H-Bridge FETs 
+#define TIMER_PWM_PERIOD  (SYSTEM_FREQ)/PWM_FREQ
                                         // Timer PWM Counts = System Freq/(2xPWM Freq)
 
 #define SPEEDIN_PWM_FACTOR  4           // Calculate this value and define the constant 
