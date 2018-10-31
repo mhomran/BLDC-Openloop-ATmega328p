@@ -54,7 +54,7 @@
                                         // = 2^12/TIMER_PWM_PERIOD, (as ADC12 is being used) rounded off to the closest whole digit
 
 #define DUTYCYCLE_MIN 5                 // (in %age) Min Dutycycle percentage - latching percentage used initially
-#define MIN_PWM_DUTYCYCLE ((unsigned long)(TIMER_PWM_PERIOD)*(unsigned int)(DUTYCYCLE_MIN))/100
+#define MIN_PWM_DUTYCYCLE		((TIMER_PWM_PERIOD)*(DUTYCYCLE_MIN))/100
                                         // Min PWM Dutycycle; also used for configuring initial dutycycle 
 
 //****************************************************************************//
