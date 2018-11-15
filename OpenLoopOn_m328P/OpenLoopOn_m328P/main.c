@@ -81,6 +81,7 @@ while (1)
 	if(SampleADC == true)
 	{
 		Start_ADC_Conversation();
+		SampleADC = false;
 	}
 }
 }   
