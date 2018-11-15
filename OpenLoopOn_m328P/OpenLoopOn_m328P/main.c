@@ -41,7 +41,7 @@ unsigned char Motor_status;
 
 // ADC Variables
 volatile int curADC, prevADC = 0;
-volatile unsigned char SampleADC;
+volatile unsigned char SampleADC = false;
 
 // Function definition
 void PWM_update (unsigned char Next_Hall_Sequence);
