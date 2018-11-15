@@ -141,7 +141,7 @@ void Start_Motor(void)
 void Stop_Motor(void)
 {
 	cli(); //disable global interrupt
-	TCCR1B &= ~(1 << CS11);
+	TCCR1B &= ~(1 << CS10);
 	Motor_Status = Stopped;
 }
 
