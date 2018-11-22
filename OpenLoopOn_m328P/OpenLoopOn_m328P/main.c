@@ -62,7 +62,7 @@ int main(void)
 		
 	//====DDR
   
-	//PWM HS> (pin 9 in Arduino mega) OCR1A PB1 
+	//PWM HS> (pin 9 in ArduinoUNO) OCR1A PB1 
 	DDRB |= 1 << PINB1;
 	//HS en PD 3,5,7  LS en PL 2,4,6 
 	DDRD = 0b11111100;
