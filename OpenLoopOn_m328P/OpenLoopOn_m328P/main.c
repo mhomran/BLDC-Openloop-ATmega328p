@@ -53,8 +53,9 @@ void Start_ADC_Conversation(void);
 void PCINT1_init(void);
 void ADC_init(void);
 void Timer1_config(void);
-
-
+void StartUpTimer2_config(void);
+volatile int i =0;			//Counter for the above timer
+volatile int StartedFlag = 1;
 int main(void)
 {
 	//Variable Initializations
@@ -74,7 +75,7 @@ int main(void)
 	
 	//start the motor
 	Start_Motor();
-	sei();        
+	        
   
 while (1) 
 {
@@ -107,18 +108,6 @@ void Start_Motor(void)
 	Desired_PWM_DutyCycle = Temp_DutyCycle;
 	}
 	
-	
-	//big push
-	for(int i =0;i < 30; i++)
-	{
-	//Read Hall inputs
-	Hall_IN = (PINC & 0b00000111) ;
-	
-	//send values 
-	PreDriver_Sequence = Hall_DIR_sequence[Hall_IN];
-	PWM_update(PreDriver_Sequence);
-	}
-  
 	if(Current_PWM_DutyCycle < Desired_PWM_DutyCycle)   // 1023
 		{
 		//Initially PWM duty cycle set to min duty cycle. If desired duty cycle < min dutycycle, latch
@@ -135,7 +124,25 @@ void Start_Motor(void)
     Motor_Status = Running;
 	}
   
+
+	
+	int i = 0;
+	while((PCIFR & (1<< PCIF1)) == 0 || i < 50){ //loop(Not started -> pulse)
+		
+		Hall_IN = (PINC & 0b00000111);
+		PreDriver_Sequence = Hall_DIR_sequence[Hall_IN];
+		PWM_update(PreDriver_Sequence);
+		i++;
+	}
+	
+	
+	Timer1_config();
 	TCCR1B |= 1 << CS10; //N =1 enable timer
+	sei();
+	
+	StartUpTimer2_config();
+	while(StartedFlag);
+	TCCR1B =0; //stop the start-up timer
 }
 
 void Stop_Motor(void)
@@ -189,6 +196,7 @@ void ADC_init(void){
 	ADMUX |= 1 << REFS0 | (1 << MUX0) | (1 << MUX1); //AVCC with external capacitor at AREF pin, MUX = 0011, ArduinoUno "A3"
 	ADCSRA |= 1 << ADEN | 1 << ADPS2;  //N = 16
 }
+
 void Timer1_config(void){
 	TCCR1A |= 1 << WGM11;
 	TCCR1B |= 1 << WGM12 | 1 << WGM13; //fast mode ICR1 = PWM period
@@ -197,6 +205,10 @@ void Timer1_config(void){
 	OCR1A = Current_PWM_DutyCycle;
 	TCCR1A |= 1 << COM1A1;  // clear at compare 
 	TIMSK1 |= 1 << TOIE1; // Timer1 overflow interrupt enabled
+}
+void StartUpTimer2_config(void){
+TCCR2B |= 1 << CS20 || 1 << CS21 || 1 << CS22;
+TIMSK2 |= 1 << TOIE2;
 }
 
 //========ISRs==========//
@@ -260,6 +272,17 @@ ISR(TIMER1_OVF_vect){
 		OCR1A = Current_PWM_DutyCycle;
 	}
 }
+ISR(TIMER2_OVF_vect){
+	i++;
+	if(i < 3000){
+	Hall_IN = (PINC & 0b00000111);
+	PreDriver_Sequence = Hall_DIR_sequence[Hall_IN];
+	PWM_update(PreDriver_Sequence);		
+	}
+	else{
+		StartedFlag = 0;
+	}	
+}
 void Start_ADC_Conversation(void){
 	//Trigger ADC Sampling
 	
@@ -276,7 +299,7 @@ void Start_ADC_Conversation(void){
 		{
 			Desired_PWM_DutyCycle = MIN_PWM_DUTYCYCLE;  // < Min DutyCycle %age - latch to min value, 1023
 		}
-		else if (prevADC >= 1000){  //to prevent closing the switches fast
+		else if (prevADC > 900){  //to prevent closing the switches fast
 			TCCR1A &= ~(1 << COM1A1);
 			PORTB |= 1 << PINB1;
 		}
