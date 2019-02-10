@@ -270,15 +270,16 @@ void Start_ADC_Conversation(void){
   curADC = ADC;
   if ((curADC > (prevADC + 10)) || (curADC < (prevADC - 10))){
     prevADC = curADC;
-    Temp_DutyCycle = (prevADC/1025.0) * TIMER_PWM_PERIOD; //1025 to not get to the top value
+    Temp_DutyCycle = (prevADC/850.0) * TIMER_PWM_PERIOD; //1025 to not get to the top value
 
     TCCR1A |= 1 << COM1A1;
     
-    if (Temp_DutyCycle < MIN_PWM_DUTYCYCLE)
+    if (prevADC < 200)
     {
-      Desired_PWM_DutyCycle = MIN_PWM_DUTYCYCLE;  // < Min DutyCycle %age - latch to min value, 1023
-    }
-    else if (prevADC >= 1000){  //to prevent closing the switches fast
+      TCCR1A &= ~(1 << COM1A1);
+      PORTB &= ~(1 << PINB1);
+    } 
+    else if (prevADC >= 830){  //to prevent closing the switches fast
       TCCR1A &= ~(1 << COM1A1);
       PORTB |= 1 << PINB1;
     }
