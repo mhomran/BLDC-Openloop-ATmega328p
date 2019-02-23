@@ -50,7 +50,7 @@ void Stop_Motor(void);
 void Start_ADC_Conversation(void);
 
 //peripherals
-void PCINT1_init(void);
+void PCINT0_init(void);
 void ADC_init(void);
 void Timer1_config(void);
 
@@ -71,7 +71,7 @@ int main(void)
     
   //====mocrocontroller_configuration
   ADC_init();
-  PCINT1_init();
+  PCINT0_init();
   Timer1_config();
   
   //start the motor
@@ -180,12 +180,11 @@ void PWM_update (unsigned char Next_Hall_Sequence)
 }
 }
 //========Microcontroller_Configuration======//
-void PCINT1_init(void){
+void PCINT0_init(void){
     //interrupt
-    PCICR |= 1 << PCIE1;
-    PCMSK1 |= (1 << PCINT8) | (1 << PCINT9) | (1 << PCINT10); //UNO (A0 PC0,A1 PC1,A2 PC2)
-    //========================================================// A0 >> yellow || A1 << green || A2 blue
-
+    PCICR |= 1 << PCIE0;
+    PCMSK0 |= (1 << PCINT3) | (1 << PCINT4) | (1 << PCINT5);	//UNO (A0 PC0,A1 PC1,A2 PC2)
+    //==========================================================// 11 > yellow || 12 > green || 13 > blue
 }
 void ADC_init(void){
   ADMUX |= 1 << REFS0 | (1 << MUX0) | (1 << MUX1); //AVCC with external capacitor at AREF pin, MUX = 0011, ArduinoUno "A3"
@@ -203,8 +202,8 @@ void Timer1_config(void){
 
 //========ISRs==========//
 
-ISR(PCINT1_vect){
-  Hall_IN = (PINC & 0b00000111);
+ISR(PCINT0_vect){
+  Hall_IN = ((PINC & 0b00111000) > 3);	
   PreDriver_Sequence = Hall_DIR_sequence[Hall_IN];
   PWM_update(PreDriver_Sequence); 
 }
@@ -270,7 +269,7 @@ void Start_ADC_Conversation(void){
   curADC = ADC;
   if ((curADC > (prevADC + 10)) || (curADC < (prevADC - 10))){
     prevADC = curADC;
-    Temp_DutyCycle = (prevADC/850.0) * TIMER_PWM_PERIOD; //1025 to not get to the top value
+    Temp_DutyCycle = (prevADC/850.0) * TIMER_PWM_PERIOD; //to not get to the top value
 
     TCCR1A |= 1 << COM1A1;
     
