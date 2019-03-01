@@ -62,8 +62,8 @@ int main(void)
     
   //====DDR
   
-  //PWM HS> (pin 9 in ArduinoUNO) OCR1A PB1 
-  //PWM LS> (pin 10)
+  //PWM HS> (pin 10 in ArduinoUNO) OCR1B PB2 
+  //PWM LS> (pin 9 in ArduinoUNO) OCR1A PB1
   DDRB |= 1 << PINB1 | 1 << PINB2;
   PORTB |= 1 << PINB2;
   //HS en PD 3,5,7  LS en PL 2,4,6 
@@ -195,7 +195,7 @@ void Timer1_config(void){
   TCCR1B |= 1 << WGM12 | 1 << WGM13; //fast mode ICR1 = PWM period
   ICR1 = TIMER_PWM_PERIOD;
   Current_PWM_DutyCycle = MIN_PWM_DUTYCYCLE; // Initial Duty cycle
-  OCR1A = Current_PWM_DutyCycle;
+  OCR1B = Current_PWM_DutyCycle;
   TCCR1A |= 1 << COM1A1;  // clear at compare 
   TIMSK1 |= 1 << TOIE1; // Timer1 overflow interrupt enabled
 }
@@ -222,12 +222,12 @@ ISR(TIMER1_OVF_vect){
       //to prevent overflow
       if (Current_PWM_DutyCycle > (TIMER_PWM_PERIOD -1)) 
       {
-        OCR1A = (TIMER_PWM_PERIOD -1);
+        OCR1B = (TIMER_PWM_PERIOD -1);
       
       }
       else 
       {
-        OCR1A = Current_PWM_DutyCycle;
+        OCR1B = Current_PWM_DutyCycle;
       }
       
       PWM_Update_Counter = 0x0;
@@ -258,7 +258,7 @@ ISR(TIMER1_OVF_vect){
     }
     
     // Update PWM duty cycle values
-    OCR1A = Current_PWM_DutyCycle;
+    OCR1B = Current_PWM_DutyCycle;
   }
 }
 void Start_ADC_Conversation(void){
