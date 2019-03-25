@@ -95,24 +95,7 @@ while (1)
 
 void Start_Motor(void)
 {
-  //trigger_ADC
-  ADCSRA |= 1 << ADSC;
-  while(ADCSRA & (1 << ADSC));
-  prevADC =ADC;
-  Temp_DutyCycle = (prevADC/1023.0) * TIMER_PWM_PERIOD ;
-  if (Temp_DutyCycle < MIN_PWM_DUTYCYCLE)
-  {
-      Desired_PWM_DutyCycle = MIN_PWM_DUTYCYCLE;  // < Min DutyCycle %age - latch to min value, 1023
-  }
-  else if (prevADC >= 1000){  //to prevent closing the switches fast
-  TCCR1A &= ~(1 << COM1B1);
-  PORTB |= 1 << PINB2;
-  }
-  else
-  {
-  Desired_PWM_DutyCycle = Temp_DutyCycle;
-  }
-  
+    Start_ADC_Conversation();
   
   //big push
   for(int i =0;i < 30; i++)
@@ -198,6 +181,7 @@ void Timer1_config(void){
   TCCR1A |= 1 << WGM11;
   TCCR1B |= 1 << WGM12 | 1 << WGM13; //fast mode ICR1 = PWM period
   ICR1 = TIMER_PWM_PERIOD;
+
   Current_PWM_DutyCycle = MIN_PWM_DUTYCYCLE; // Initial Duty cycle
   OCR1B = Current_PWM_DutyCycle;
   TCCR1A |= 1 << COM1B1;  // clear at compare 
@@ -281,6 +265,7 @@ void Start_ADC_Conversation(void){
     {
       TCCR1A &= ~(1 << COM1B1);
       PORTB &= ~(1 << PINB2);
+      Desired_PWM_DutyCycle = MIN_PWM_DUTYCYCLE;
     } 
     else if (prevADC >= 830){  //to prevent closing the switches fast
       TCCR1A &= ~(1 << COM1B1);
