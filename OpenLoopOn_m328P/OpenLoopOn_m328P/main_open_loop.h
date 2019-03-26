@@ -45,7 +45,7 @@
 // Clock Timing Definitions
 //****************************************************************************//
 
-#define SYSTEM_FREQ 16000000UL          // (in Hz) System Freq, Timer PWM Time Base
+ #define SYSTEM_FREQ 16000000UL          // (in Hz) System Freq, Timer PWM Time Base
 #define PWM_FREQ 5000                  // (in Hz) PWM Freq for switching the H-Bridge FETs 
 #define TIMER_PWM_PERIOD  (SYSTEM_FREQ)/PWM_FREQ
                                         // Timer PWM Counts = System Freq/(2xPWM Freq)
@@ -54,31 +54,24 @@
                                         // = 2^12/TIMER_PWM_PERIOD, (as ADC12 is being used) rounded off to the closest whole digit
 
 #define DUTYCYCLE_MIN 5                 // (in %age) Min Dutycycle percentage - latching percentage used initially
-#define MIN_PWM_DUTYCYCLE		((TIMER_PWM_PERIOD)*(DUTYCYCLE_MIN))/100
+#define MIN_PWM_DUTYCYCLE   ((TIMER_PWM_PERIOD)*(DUTYCYCLE_MIN))/100
                                         // Min PWM Dutycycle; also used for configuring initial dutycycle 
 
 //****************************************************************************//
 // Motor Speed Control - Open Loop Definitions
 //****************************************************************************//
 
-#define MOTOR_STARTUP_TIME  100         // (in ms) Motor Start-Up time 
-#define DUTYCYCLE_CHANGE_PERIODS  10    // #PWM periods dutycycle change is expected, used for start-up routine only
+#define MOTOR_STARTUP_TIME  100        // (in ms) Motor Start-Up time 
+#define DUTYCYCLE_CHANGE_PERIODS  1000    // #PWM periods dutycycle change is expected, used for start-up routine only
 #define STARTUP_STEPS ((unsigned long)PWM_FREQ*MOTOR_STARTUP_TIME)/(DUTYCYCLE_CHANGE_PERIODS*1000)
                                         // For e.g: PWM freq = 15kHz, Startup time=100ms, 
                                         // then #steps for ramping = (15*100)/10 = 150 steps
 
-#define ADC_SAMPLING_PWM_PERIODS 1000   // Every #PWM periods when ADC is sampled
+#define ADC_SAMPLING_PWM_PERIODS 10   // Every #PWM periods when ADC is sampled
 #define MAIN_PWM_BUCKET_PERCENT 2/10    // (in %age) Resolution by which the PWM dutycycle is 
                                         // incremented/decremented after motor start-up
 #define MAIN_PWM_BUCKET_DC  (TIMER_PWM_PERIOD*MAIN_PWM_BUCKET_PERCENT)/100
                                         // PWM dutycycle change resolution in timer counts
-
-//****************************************************************************//
-// Motor Speed Input Defintions
-//****************************************************************************//
-
-#define ANALOG_SPEEDIN
-//#define PWM_SPEEDIN
 
 //****************************************************************************//
 // Motor Status Definitions
@@ -89,7 +82,7 @@
 #define Running 0x02
 
 #define DIRECTION_CCW 
-// #define DIRECTION_CW
+//#define DIRECTION_CW
 
 #define true 0x01
 #define false 0x0

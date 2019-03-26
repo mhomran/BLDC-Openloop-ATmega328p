@@ -4,8 +4,8 @@
  * Created: 9/16/2018 2:43:15 PM
  * Created by : Mohamed Hassanin
  */ 
+//////////////////////////////////////////////////////////////////
 #include <avr/io.h>
-#include "main_open_loop.h"
 #include "hall_sensor.h"
 #include <avr/interrupt.h>
 #define F_CPU 16000000UL      // Configure System Clock = DCO = 16Mhz
@@ -84,6 +84,7 @@ int main(void)
   
 while (1) 
 {
+  
   if(SampleADC == true)
   {
     Start_ADC_Conversation();
@@ -95,26 +96,21 @@ while (1)
 
 void Start_Motor(void)
 {
-    Start_ADC_Conversation();
+  Start_ADC_Conversation(); 
   
-  //big push
-  for(int i =0;i < 30; i++)
-  {
-  //Read Hall inputs
-   Hall_IN = ((PINB & 0b00111000) >> 3);  
-  
-  //send values 
+  Hall_IN = ((PINB & 0b00111000) >> 3);  
   PreDriver_Sequence = Hall_DIR_sequence[Hall_IN];
-  PWM_update(PreDriver_Sequence);
-  }
-  
+  PWM_update(PreDriver_Sequence); 
+  //start the timer
+
+  //determine bucket step
   if(Current_PWM_DutyCycle < Desired_PWM_DutyCycle)   // 1023
-    {
-    //Initially PWM duty cycle set to min duty cycle. If desired duty cycle < min dutycycle, latch
-    //at min duty cycle, else compute #steps required to reach input speed value in ~100ms
-    PWM_BucketStep = (Desired_PWM_DutyCycle-Current_PWM_DutyCycle)/(STARTUP_STEPS);  
+  {
+    // Initially PWM dutycycle set to min dutycycle. If desired dutycycle < min dutycycle, latch
+    // at min dutycycle, else compute #steps required to reach input speed value in ~100ms
+    PWM_BucketStep = (Desired_PWM_DutyCycle-Current_PWM_DutyCycle)/(STARTUP_STEPS);  //1023
     if(PWM_BucketStep <= 0)
-      {
+    {
       PWM_BucketStep = 1;
     }
     Motor_Status = StartUp;
@@ -257,7 +253,7 @@ void Start_ADC_Conversation(void){
   curADC = ADC;
   if ((curADC > (prevADC + 10)) || (curADC < (prevADC - 10))){
     prevADC = curADC;
-    Temp_DutyCycle = (prevADC/850.0) * TIMER_PWM_PERIOD; //to not get to the top value
+    Temp_DutyCycle = ((prevADC-190)/850.0) * TIMER_PWM_PERIOD; //to not get to the top value
 
     TCCR1A |= 1 << COM1B1;
     
