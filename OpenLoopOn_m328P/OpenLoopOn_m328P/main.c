@@ -4,6 +4,47 @@
  * Created: 9/16/2018 2:43:15 PM
  * Created by : Mohamed Hassanin
  */ 
+ #define SYSTEM_FREQ 16000000UL          // (in Hz) System Freq, Timer PWM Time Base
+#define PWM_FREQ 5000                  // (in Hz) PWM Freq for switching the H-Bridge FETs 
+#define TIMER_PWM_PERIOD  (SYSTEM_FREQ)/PWM_FREQ
+                                        // Timer PWM Counts = System Freq/(2xPWM Freq)
+
+#define SPEEDIN_PWM_FACTOR  4           // Calculate this value and define the constant 
+                                        // = 2^12/TIMER_PWM_PERIOD, (as ADC12 is being used) rounded off to the closest whole digit
+
+#define DUTYCYCLE_MIN 5                 // (in %age) Min Dutycycle percentage - latching percentage used initially
+#define MIN_PWM_DUTYCYCLE   ((TIMER_PWM_PERIOD)*(DUTYCYCLE_MIN))/100
+                                        // Min PWM Dutycycle; also used for configuring initial dutycycle 
+
+//****************************************************************************//
+// Motor Speed Control - Open Loop Definitions
+//****************************************************************************//
+
+#define MOTOR_STARTUP_TIME  100        // (in ms) Motor Start-Up time 
+#define DUTYCYCLE_CHANGE_PERIODS  1000    // #PWM periods dutycycle change is expected, used for start-up routine only
+#define STARTUP_STEPS ((unsigned long)PWM_FREQ*MOTOR_STARTUP_TIME)/(DUTYCYCLE_CHANGE_PERIODS*1000)
+                                        // For e.g: PWM freq = 15kHz, Startup time=100ms, 
+                                        // then #steps for ramping = (15*100)/10 = 150 steps
+
+#define ADC_SAMPLING_PWM_PERIODS 10   // Every #PWM periods when ADC is sampled
+#define MAIN_PWM_BUCKET_PERCENT 2/10    // (in %age) Resolution by which the PWM dutycycle is 
+                                        // incremented/decremented after motor start-up
+#define MAIN_PWM_BUCKET_DC  (TIMER_PWM_PERIOD*MAIN_PWM_BUCKET_PERCENT)/100
+                                        // PWM dutycycle change resolution in timer counts
+
+//****************************************************************************//
+// Motor Status Definitions
+//****************************************************************************//
+
+#define Stopped 0x00
+#define StartUp 0x01
+#define Running 0x02
+
+#define DIRECTION_CCW 
+//#define DIRECTION_CW
+
+#define true 0x01
+#define false 0x0
 //////////////////////////////////////////////////////////////////
 #include <avr/io.h>
 #include "hall_sensor.h"
@@ -253,7 +294,9 @@ void Start_ADC_Conversation(void){
   curADC = ADC;
   if ((curADC > (prevADC + 10)) || (curADC < (prevADC - 10))){
     prevADC = curADC;
-    Temp_DutyCycle = ((prevADC-190)/850.0) * TIMER_PWM_PERIOD; //to not get to the top value
+   
+    Temp_DutyCycle = ((prevADC-200)/655.0) * TIMER_PWM_PERIOD; //to not get to the top value
+
 
     TCCR1A |= 1 << COM1B1;
     
@@ -263,7 +306,7 @@ void Start_ADC_Conversation(void){
       PORTB &= ~(1 << PINB2);
       Desired_PWM_DutyCycle = MIN_PWM_DUTYCYCLE;
     } 
-    else if (prevADC >= 830){  //to prevent closing the switches fast
+    else if (prevADC >= 855){  //to prevent closing the switches fast
       TCCR1A &= ~(1 << COM1B1);
       PORTB |= 1 << PINB2;
     }
