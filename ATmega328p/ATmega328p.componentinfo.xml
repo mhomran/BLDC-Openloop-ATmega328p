@@ -10,12 +10,12 @@
 			<CVariant></CVariant>
 			<CVendor>Atmel</CVendor>
 			<CVersion>1.2.0</CVersion>
-			<DefaultRepoPath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs</DefaultRepoPath>
+			<DefaultRepoPath>Z:/programs_installed\Atmel\Studio\7.0\Packs</DefaultRepoPath>
 			<DependentComponents xmlns:d4p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
 			<Description></Description>
 			<Files xmlns:d4p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
 				<d4p1:anyType i:type="FileInfo">
-					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\include</AbsolutePath>
+					<AbsolutePath>Z:/programs_installed\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\include</AbsolutePath>
 					<Attribute></Attribute>
 					<Category>include</Category>
 					<Condition>C</Condition>
@@ -26,7 +26,7 @@
 					<SourcePath></SourcePath>
 				</d4p1:anyType>
 				<d4p1:anyType i:type="FileInfo">
-					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\include\avr\iom328p.h</AbsolutePath>
+					<AbsolutePath>Z:/programs_installed\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\include\avr\iom328p.h</AbsolutePath>
 					<Attribute></Attribute>
 					<Category>header</Category>
 					<Condition>C</Condition>
@@ -37,18 +37,18 @@
 					<SourcePath></SourcePath>
 				</d4p1:anyType>
 				<d4p1:anyType i:type="FileInfo">
-					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\templates\main.c</AbsolutePath>
+					<AbsolutePath>Z:/programs_installed\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\templates\main.c</AbsolutePath>
 					<Attribute>template</Attribute>
 					<Category>source</Category>
 					<Condition>C Exe</Condition>
-					<FileContentHash>4+DNT5g+dIl7s8YFfUQOFw==</FileContentHash>
+					<FileContentHash>AXygS/Ab8g8iQ/WECuN7vw==</FileContentHash>
 					<FileVersion></FileVersion>
 					<Name>templates/main.c</Name>
 					<SelectString>Main file (.c)</SelectString>
 					<SourcePath></SourcePath>
 				</d4p1:anyType>
 				<d4p1:anyType i:type="FileInfo">
-					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\templates\main.cpp</AbsolutePath>
+					<AbsolutePath>Z:/programs_installed\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\templates\main.cpp</AbsolutePath>
 					<Attribute>template</Attribute>
 					<Category>source</Category>
 					<Condition>C Exe</Condition>
@@ -59,7 +59,7 @@
 					<SourcePath></SourcePath>
 				</d4p1:anyType>
 				<d4p1:anyType i:type="FileInfo">
-					<AbsolutePath>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p</AbsolutePath>
+					<AbsolutePath>Z:/programs_installed\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.209\gcc\dev\atmega328p</AbsolutePath>
 					<Attribute></Attribute>
 					<Category>libraryPrefix</Category>
 					<Condition>GCC</Condition>
@@ -71,7 +71,7 @@
 				</d4p1:anyType>
 			</Files>
 			<PackName>ATmega_DFP</PackName>
-			<PackPath>C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/Atmel.ATmega_DFP.pdsc</PackPath>
+			<PackPath>Z:/programs_installed/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/Atmel.ATmega_DFP.pdsc</PackPath>
 			<PackVersion>1.2.209</PackVersion>
 			<PresentInProject>true</PresentInProject>
 			<ReferenceConditionId>ATmega328P</ReferenceConditionId>
